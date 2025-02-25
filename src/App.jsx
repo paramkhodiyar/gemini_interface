@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-
 export default function PoemBox() {
   const [response, setResponse] = useState("");
   const [error, setError] = useState("");
@@ -18,28 +17,50 @@ export default function PoemBox() {
       } else {
         clearInterval(interval);
       }
-    }, 50); // Adjust speed of typing animation
+    }, 15);
   };
-
   const fetchPoem = async () => {
     setLoading(true);
+    setError("");
+  
     try {
-      const genAI = new GoogleGenerativeAI("AIzaSyAmqV2g1Z8tGZF4dCEYV_-Kkt7y3GTbqgA");
+      const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GOOGLE_API_KEY);
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  
       const result = await model.generateContent(prompt);
-
-      const text = result.response.candidates[0]?.content.parts[0]?.text || "No poem received.";
+      console.log("Full API Response:", result);
+  
+      if (!result?.response) {
+        setError("Error: No valid response from Gemini API.");
+        return;
+      }
+  
+      const candidates = result.response.candidates;
+      console.log("Candidates:", candidates);
+  
+      if (!candidates || candidates.length === 0) {
+        setError("Error: No candidates received from Gemini API.");
+        return;
+      }
+      const content = candidates[0]?.content;
+      if (!content || !content.parts || content.parts.length === 0) {
+        setError("Error: No valid content received.");
+        return;
+      }
+  
+      const text = content.parts[0]?.text || "No poem received.";
+      console.log("Extracted Text:", text);
+  
       typeText(text);
     } catch (err) {
       setError(`Error: ${err.message}`);
+      console.error("API Call Failed:", err);
     } finally {
       setLoading(false);
     }
-  };
-
+  };  
   return (
     <div className="container">
-      {/* Left Side: Input and Button */}
       <div className="left">
         <input 
           type="text" 

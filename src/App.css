@@ -51,9 +51,11 @@
   font-size: 18px;
   color: white;
   min-height: 100px;
-  white-space: pre-line;
+  max-width: 70%; /* Restricts the width */
+  overflow-wrap: break-word; /* Ensures words wrap */
+  word-wrap: break-word; /* Ensures long words break */
+  white-space: pre-wrap; /* Maintains line breaks and wraps text */
 }
-
 .response-message {
   font-family: monospace;
   white-space: pre-wrap;
