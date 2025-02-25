@@ -28,8 +28,6 @@ export default function PoemBox() {
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
   
       const result = await model.generateContent(prompt);
-      console.log("Full API Response:", result);
-  
       if (!result?.response) {
         setError("Error: No valid response from Gemini API.");
         return;
@@ -61,25 +59,36 @@ export default function PoemBox() {
   };  
   return (
     <div className="container">
-      <div className="left">
-        <input 
-          type="text" 
-          value={prompt} 
-          onChange={(e) => setPrompt(e.target.value)} 
-          placeholder="Enter your prompt here"
-          className="prompt-input"
-        />
-        <button onClick={fetchPoem} className="fetch-button" disabled={loading}>
-          {loading ? "Generating..." : "Use Gemini"}
-        </button>
-      </div>
-      <div className="right">
-        {error ? (
-          <p className="error-message">{error}</p>
-        ) : (
-          <p className="response-message">{response}</p>
-        )}
-      </div>
+      
+  <div className="left">
+    <div className="header">
+  <h1 className="headinggem">Sample AI using Gemini</h1>
+  </div>
+    <input 
+      type="text" 
+      value={prompt} 
+      onChange={(e) => setPrompt(e.target.value)} 
+      placeholder="Enter your prompt here"
+      className="prompt-input"
+    />
+    <button onClick={fetchPoem} className="fetch-button" disabled={loading}>
+      {loading ? "Generating..." : "Use Gemini"}
+    </button>
+  </div>
+
+  <div className="right">
+    <div className="response-container">
+      {error ? (
+        <p className="error-message">{error}</p>
+      ) : (
+        <p className="response-message">
+          {response.split("\n").map((line, index) => (
+            <span key={index}>{line}<br /></span>
+          ))}
+        </p>
+      )}
     </div>
+  </div>
+</div>
   );
 }
